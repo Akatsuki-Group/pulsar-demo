@@ -1,0 +1,40 @@
+package com.itheima.admin;
+
+import org.apache.pulsar.client.admin.PulsarAdmin;
+import org.apache.pulsar.common.policies.data.TenantInfo;
+
+import java.util.HashSet;
+import java.util.List;
+
+// 演示 如何使用JAVA API 完成 租户操作
+public class _01_createTenants {
+
+    public static void main(String[] args) throws Exception {
+
+        // 1. 创建Pulsar的Admin管理对象
+        String serviceHttpUrl = "http://node1:8080,node2:8080,node3:8080";
+        PulsarAdmin pulsarAdmin = PulsarAdmin.builder().serviceHttpUrl(serviceHttpUrl).build();
+        //2. 基于Pulsar的Admin对象进行相关的操作
+
+        //2.1: 如何创建 租户操作
+        HashSet<String> allowedClusters = new HashSet<>();
+        allowedClusters.add("pulsar-cluster");
+        TenantInfo config = TenantInfo.builder().allowedClusters(allowedClusters).build();
+        pulsarAdmin.tenants().createTenant("itcast_pulsar_t",config);
+
+        // 2.2: 查看当前有那些租户
+        /*List<String> tenants = pulsarAdmin.tenants().getTenants();
+        for (String tenant : tenants) {
+            System.out.println("租户信息为:"+tenant);
+        }*/
+
+        //2.3: 删除租户操作
+        //pulsarAdmin.tenants().deleteTenant("itcast_pulsar_t");
+
+
+        //3. 关闭管理对象
+        pulsarAdmin.close();
+
+    }
+
+}
